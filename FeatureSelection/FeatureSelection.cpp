@@ -52,9 +52,11 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
     
     int nnlable = 0;
     temp_set.push_back(added);
-    for (int i = 0; i <data.size() ; ++i) {
+    for (int i = 0; i <2000 ; ++i) {
         int label = data[i][0];
-        feature1 = sfeature(data[i], temp_set);
+        for (int j = 0; j < temp_set.size(); ++j) {
+            feature1.push_back(data[i][temp_set[j]]);
+        }
         //cresult.clear();
         //cout << data[i].size();
         //cout << "Feature 1:";
@@ -62,11 +64,20 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
     
         double nnd = 99999999;
         int nnl;
-        for (int k = 0; k < data.size(); ++k) {
+        double sum;
+        for (int k = 0; k < 2000; ++k) {
+            
             if (i != k) {
-                feature2 = sfeature(data[k], temp_set);
+                for (int j = 0; j < temp_set.size(); ++j) {
+                    feature2.push_back(data[k][temp_set[j]]);
+                }
+                sum = 0.0;
                 //cresult.clear();
-                dist = distance(feature1, feature2);
+                for (int i = 0; i < feature1.size(); ++i) {
+                    sum += pow((feature1[i] - feature2[i]),2);
+                }
+                dist = sqrt(sum);
+                feature2.clear();
                 //cout << "Feature 2:";
                 //printdatadouble(feature2);
                 //cout << "Dist: "<<k<<" is " << dist<<"\n";
@@ -78,14 +89,16 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
                     //cout << nnlable<<"\n";
                 }
             }
+            
         }
+        feature1.clear();
         if (label == nnlable) {
             correct = correct + 1;
             //cout << correct << "\n";
         }
         
     }
-    result = correct/ (double)data.size();
+    result = (double)correct/ 2000;
     cout << result<<"\n";
     return result;
 }
