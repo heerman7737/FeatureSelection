@@ -11,6 +11,7 @@
 #include <math.h>
 #include <limits>
 #include <iomanip>
+#include <numeric>
 using namespace std;
 
 
@@ -49,10 +50,10 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
     vector<double> feature1;
     vector<double> feature2;
     double dist;
-    
+    int len = data.size();
     int nnlable = 0;
     temp_set.push_back(added);
-    for (int i = 0; i <2000 ; ++i) {
+    for (int i = 0; i <len ; ++i) {
         int label = data[i][0];
         for (int j = 0; j < temp_set.size(); ++j) {
             feature1.push_back(data[i][temp_set[j]]);
@@ -65,7 +66,7 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
         double nnd = 99999999;
         int nnl;
         double sum;
-        for (int k = 0; k < 2000; ++k) {
+        for (int k = 0; k < len; ++k) {
             
             if (i != k) {
                 for (int j = 0; j < temp_set.size(); ++j) {
@@ -98,7 +99,7 @@ double accuracy(const vector<vector<double>>& data,const vector<int>& curr_set,i
         }
         
     }
-    result = (double)correct/ 2000;
+    result = (double)correct/ len;
     cout << result<<"\n";
     return result;
 }
@@ -137,13 +138,112 @@ void search(const vector<vector<double>>& data) {
     printdataint(features);
     cout << "Best accuracy: " << 100 * best_accuracy << "%";
 }
+double daccuracy(const vector<vector<double>>& data, const vector<int>& curr_set, int added) {
+    int correct = 0;
+    double result;
+    vector<int> temp_set = curr_set;
+    vector<double> feature1;
+    vector<double> feature2;
+    double dist;
+    int len = data.size();
+    int nnlable = 0;
+    temp_set.erase(remove(temp_set.begin(), temp_set.end(), added), temp_set.end());
+    for (int i = 0; i < len; ++i) {
+        int label = data[i][0];
+        for (int j = 0; j < temp_set.size(); ++j) {
+            feature1.push_back(data[i][temp_set[j]]);
+        }
+        //cresult.clear();
+        //cout << data[i].size();
+        //cout << "Feature 1:";
+        //printdatadouble(feature1);
+
+        double nnd = 99999999;
+        int nnl;
+        double sum;
+        for (int k = 0; k < len; ++k) {
+
+            if (i != k) {
+                for (int j = 0; j < temp_set.size(); ++j) {
+                    feature2.push_back(data[k][temp_set[j]]);
+                }
+                sum = 0.0;
+                //cresult.clear();
+                for (int i = 0; i < feature1.size(); ++i) {
+                    sum += pow((feature1[i] - feature2[i]), 2);
+                }
+                dist = sqrt(sum);
+                feature2.clear();
+                //cout << "Feature 2:";
+                //printdatadouble(feature2);
+                //cout << "Dist: "<<k<<" is " << dist<<"\n";
+                if (dist < nnd) {
+                    //cout << "Run "<<dist<<"\n";
+                    nnd = dist;
+                    nnl = k;
+                    nnlable = data[nnl][0];
+                    //cout << nnlable<<"\n";
+                }
+            }
+
+        }
+        feature1.clear();
+        if (label == nnlable) {
+            correct = correct + 1;
+            //cout << correct << "\n";
+        }
+
+    }
+    result = (double)correct / len;
+    cout << result << "\n";
+    return result;
+}
+void back(const vector<vector<double>>& data) {
+
+    vector<int> features(data[0].size()-1);
+    //vector<int> features = { 17,18,19,20,21,22,23,24,25,26,27 };
+    std::iota(features.begin(), features.end(), 1);
+    vector<int> best_set(data[0].size()-1);
+    std::iota(features.begin(), features.end(), 1);
+    //vector<int> best_set = { 17,18,19,20,21,22,23,24,25,26,27 };
+    double best_accuracy = 0;
+    double temp;
+    int feature_to_add;
+    //cout << data[0].size();
+    for (int i = 1; i < data[0].size(); ++i) {
+
+        cout << "On the " << i << "th level of the search tree" << "\n";
+        double curr_accuracy = 0;
+        for (int k = 1; k < data[0].size(); ++k) {
+            if (find(features.begin(), features.end(), k) != features.end()) {
+                cout << "--Considering adding feature " << k << "\n";
+
+                temp = daccuracy(data, features, k);
+                if (temp >= curr_accuracy) {
+                    curr_accuracy = temp;
+                    feature_to_add = k;
+                }
+            }
+        }
+        cout << "On level " << i << " added feature " << feature_to_add << "\n";
+        features.erase(remove(features.begin(), features.end(), feature_to_add), features.end());
+        if (curr_accuracy > best_accuracy) {
+            best_set = features;
+            best_accuracy = curr_accuracy;
+        }
+        printdataint(features);
+    }
+    cout << "Finish search! The best feature subset is ";
+    printdataint(features);
+    cout << "Best accuracy: " << 100 * best_accuracy << "%";
+}
 int main()
 {
     string mytext;
     vector<vector<double>>* data = new vector<vector<double>>;
     //vector<vector<double>>& data = *dr;
     double temps;
-    ifstream myfile("Ver_2_CS170_Fall_2021_LARGE_data__27.txt");
+    ifstream myfile("Ver_2_CS170_Fall_2021_Small_data__73.txt");
     
     cout << mytext;
     int i = 0;
@@ -163,7 +263,8 @@ int main()
     //    printdatadouble(dr[c]);
     //}
     
-    search(dr);
+    //search(dr);  //Select which algorithm to choose (search for forward selection) || back for backward elimination 
+    back(dr);
     myfile.close();
     
     
