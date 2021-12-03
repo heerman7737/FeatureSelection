@@ -216,7 +216,7 @@ void back(const vector<vector<double>>& data) {
         double curr_accuracy = 0;
         for (int k = 1; k < data[0].size(); ++k) {
             if (find(features.begin(), features.end(), k) != features.end()) {
-                cout << "--Considering adding feature " << k << "\n";
+                cout << "--Considering eliminating feature " << k << "\n";
 
                 temp = daccuracy(data, features, k);
                 if (temp >= curr_accuracy) {
@@ -225,7 +225,7 @@ void back(const vector<vector<double>>& data) {
                 }
             }
         }
-        cout << "On level " << i << " added feature " << feature_to_add << "\n";
+        cout << "On level " << i << " eliminated feature " << feature_to_add << "\n";
         features.erase(remove(features.begin(), features.end(), feature_to_add), features.end());
         if (curr_accuracy > best_accuracy) {
             best_set = features;
