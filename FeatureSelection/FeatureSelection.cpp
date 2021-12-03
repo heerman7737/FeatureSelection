@@ -239,11 +239,20 @@ void back(const vector<vector<double>>& data) {
 }
 int main()
 {
+    int algorithm;
+    string file;
+    cout << "Giang To 's Feature Selection.\n";
+    cout << "Type the file name:\n ";
+    cin >> file;
+    cout << "Choose the algorithm: \n";
+    cout << "1.Forward Selection:\n";
+    cout << "2.Backward Elimination:\n";
+    cin >> algorithm;
     string mytext;
     vector<vector<double>>* data = new vector<vector<double>>;
     //vector<vector<double>>& data = *dr;
     double temps;
-    ifstream myfile("Ver_2_CS170_Fall_2021_Small_data__73.txt");
+    ifstream myfile(file);
     
     cout << mytext;
     int i = 0;
@@ -264,7 +273,13 @@ int main()
     //}
     
     //search(dr);  //Select which algorithm to choose (search for forward selection) || back for backward elimination 
-    back(dr);
+    if (algorithm == 1) {
+        search(dr);
+    }
+    else {
+        back(dr);
+    }
+    
     myfile.close();
     
     
