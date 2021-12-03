@@ -135,7 +135,7 @@ void search(const vector<vector<double>>& data) {
         printdataint(features);
     }
     cout << "Finish search! The best feature subset is ";
-    printdataint(features);
+    printdataint(best_set);
     cout << "Best accuracy: " << 100 * best_accuracy << "%";
 }
 double daccuracy(const vector<vector<double>>& data, const vector<int>& curr_set, int added) {
@@ -234,55 +234,50 @@ void back(const vector<vector<double>>& data) {
         printdataint(features);
     }
     cout << "Finish search! The best feature subset is ";
-    printdataint(features);
+    printdataint(best_set);
     cout << "Best accuracy: " << 100 * best_accuracy << "%";
 }
 int main()
 {
-    int algorithm;
-    string file;
-    cout << "Giang To 's Feature Selection.\n";
-    cout << "Type the file name:\n ";
-    cin >> file;
-    cout << "Choose the algorithm: \n";
-    cout << "1.Forward Selection:\n";
-    cout << "2.Backward Elimination:\n";
-    cin >> algorithm;
     string mytext;
+    string filename;
+    cout << "Welcome to Giang KNN\n";
+    cout << "Type file name:\n";
+    cin >> filename;
     vector<vector<double>>* data = new vector<vector<double>>;
     //vector<vector<double>>& data = *dr;
     double temps;
-    ifstream myfile(file);
     
+    ifstream myfile(filename);
+
     cout << mytext;
     int i = 0;
     while (getline(myfile, mytext)) {
         istringstream num(mytext);
-        
+
         (*data).push_back(vector<double>());
         while (num >> temps) {
-             (*data)[i].push_back(temps);
+            (*data)[i].push_back(temps);
         }
         i++;
     }
     //cout << (*data)[499][10];
-    
+    int algorithm;
+    cout << "Choose algorithm, 1 for Forward Selection, 2 for Backward Elimination\n";
+    cin >> algorithm;
     vector<vector<double>>& dr = *data;
     //for (int c = 0; c < 500; c++) {
     //    printdatadouble(dr[c]);
     //}
-    
-    //search(dr);  //Select which algorithm to choose (search for forward selection) || back for backward elimination 
     if (algorithm == 1) {
         search(dr);
     }
     else {
         back(dr);
     }
-    
     myfile.close();
-    
-    
+
+
     //vector<int> fset = {  };
     //accuracy(dr,fset,1,data->size());
 
